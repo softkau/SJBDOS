@@ -1,0 +1,215 @@
+
+apps/rpn/rpn:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000001190 <is_numeric(char const*)>:
+    1190:	55                   	push   rbp
+    1191:	48 89 e5             	mov    rbp,rsp
+    1194:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
+    119b:	00 00 00 
+    119e:	66 90                	xchg   ax,ax
+    11a0:	0f b6 07             	movzx  eax,BYTE PTR [rdi]
+    11a3:	8d 48 c6             	lea    ecx,[rax-0x3a]
+    11a6:	48 83 c7 01          	add    rdi,0x1
+    11aa:	80 f9 f5             	cmp    cl,0xf5
+    11ad:	77 f1                	ja     11a0 <is_numeric(char const*)+0x10>
+    11af:	84 c0                	test   al,al
+    11b1:	0f 94 c0             	sete   al
+    11b4:	5d                   	pop    rbp
+    11b5:	c3                   	ret    
+    11b6:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
+    11bd:	00 00 00 
+
+00000000000011c0 <atol(char const*)>:
+    11c0:	55                   	push   rbp
+    11c1:	48 89 e5             	mov    rbp,rsp
+    11c4:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
+    11cb:	00 00 00 
+    11ce:	66 90                	xchg   ax,ax
+    11d0:	0f b6 0f             	movzx  ecx,BYTE PTR [rdi]
+    11d3:	48 83 c7 01          	add    rdi,0x1
+    11d7:	80 f9 20             	cmp    cl,0x20
+    11da:	74 f4                	je     11d0 <atol(char const*)+0x10>
+    11dc:	31 c0                	xor    eax,eax
+    11de:	f6 c1 df             	test   cl,0xdf
+    11e1:	74 29                	je     120c <atol(char const*)+0x4c>
+    11e3:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
+    11ea:	00 00 00 
+    11ed:	0f 1f 00             	nop    DWORD PTR [rax]
+    11f0:	48 0f be c9          	movsx  rcx,cl
+    11f4:	48 8d 04 80          	lea    rax,[rax+rax*4]
+    11f8:	48 8d 04 41          	lea    rax,[rcx+rax*2]
+    11fc:	48 83 c0 d0          	add    rax,0xffffffffffffffd0
+    1200:	0f b6 0f             	movzx  ecx,BYTE PTR [rdi]
+    1203:	48 83 c7 01          	add    rdi,0x1
+    1207:	f6 c1 df             	test   cl,0xdf
+    120a:	75 e4                	jne    11f0 <atol(char const*)+0x30>
+    120c:	5d                   	pop    rbp
+    120d:	c3                   	ret    
+    120e:	66 90                	xchg   ax,ax
+
+0000000000001210 <strlen(char const*)>:
+    1210:	55                   	push   rbp
+    1211:	48 89 e5             	mov    rbp,rsp
+    1214:	80 3f 00             	cmp    BYTE PTR [rdi],0x0
+    1217:	74 17                	je     1230 <strlen(char const*)+0x20>
+    1219:	31 c9                	xor    ecx,ecx
+    121b:	0f 1f 44 00 00       	nop    DWORD PTR [rax+rax*1+0x0]
+    1220:	48 8d 41 01          	lea    rax,[rcx+0x1]
+    1224:	80 7c 0f 01 00       	cmp    BYTE PTR [rdi+rcx*1+0x1],0x0
+    1229:	48 89 c1             	mov    rcx,rax
+    122c:	75 f2                	jne    1220 <strlen(char const*)+0x10>
+    122e:	5d                   	pop    rbp
+    122f:	c3                   	ret    
+    1230:	31 c0                	xor    eax,eax
+    1232:	5d                   	pop    rbp
+    1233:	c3                   	ret    
+    1234:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
+    123b:	00 00 00 
+    123e:	66 90                	xchg   ax,ax
+
+0000000000001240 <empty()>:
+    1240:	55                   	push   rbp
+    1241:	48 89 e5             	mov    rbp,rsp
+    1244:	83 3d ed 11 00 00 ff 	cmp    DWORD PTR [rip+0x11ed],0xffffffff        # 2438 <stk_ptr>
+    124b:	0f 94 c0             	sete   al
+    124e:	5d                   	pop    rbp
+    124f:	c3                   	ret    
+
+0000000000001250 <push(long)>:
+    1250:	55                   	push   rbp
+    1251:	48 89 e5             	mov    rbp,rsp
+    1254:	48 63 05 dd 11 00 00 	movsxd rax,DWORD PTR [rip+0x11dd]        # 2438 <stk_ptr>
+    125b:	48 8d 48 01          	lea    rcx,[rax+0x1]
+    125f:	89 0d d3 11 00 00    	mov    DWORD PTR [rip+0x11d3],ecx        # 2438 <stk_ptr>
+    1265:	48 89 3c c5 48 24 00 	mov    QWORD PTR [rax*8+0x2448],rdi
+    126c:	00 
+    126d:	5d                   	pop    rbp
+    126e:	c3                   	ret    
+    126f:	90                   	nop
+
+0000000000001270 <pop()>:
+    1270:	55                   	push   rbp
+    1271:	48 89 e5             	mov    rbp,rsp
+    1274:	48 63 05 bd 11 00 00 	movsxd rax,DWORD PTR [rip+0x11bd]        # 2438 <stk_ptr>
+    127b:	8d 48 ff             	lea    ecx,[rax-0x1]
+    127e:	89 0d b4 11 00 00    	mov    DWORD PTR [rip+0x11b4],ecx        # 2438 <stk_ptr>
+    1284:	48 8b 04 c5 40 24 00 	mov    rax,QWORD PTR [rax*8+0x2440]
+    128b:	00 
+    128c:	5d                   	pop    rbp
+    128d:	c3                   	ret    
+    128e:	66 90                	xchg   ax,ax
+
+0000000000001290 <main>:
+    1290:	55                   	push   rbp
+    1291:	48 89 e5             	mov    rbp,rsp
+    1294:	83 ff 01             	cmp    edi,0x1
+    1297:	0f 8e 73 01 00 00    	jle    1410 <main+0x180>
+    129d:	41 89 f8             	mov    r8d,edi
+    12a0:	41 b9 01 00 00 00    	mov    r9d,0x1
+    12a6:	eb 23                	jmp    12cb <main+0x3b>
+    12a8:	89 c8                	mov    eax,ecx
+    12aa:	99                   	cdq    
+    12ab:	41 f7 fb             	idiv   r11d
+    12ae:	48 98                	cdqe   
+    12b0:	89 3d 82 11 00 00    	mov    DWORD PTR [rip+0x1182],edi        # 2438 <stk_ptr>
+    12b6:	4a 89 04 d5 40 24 00 	mov    QWORD PTR [r10*8+0x2440],rax
+    12bd:	00 
+    12be:	49 83 c1 01          	add    r9,0x1
+    12c2:	4d 39 c1             	cmp    r9,r8
+    12c5:	0f 84 4b 01 00 00    	je     1416 <main+0x186>
+    12cb:	4a 8b 0c ce          	mov    rcx,QWORD PTR [rsi+r9*8]
+    12cf:	48 89 c8             	mov    rax,rcx
+    12d2:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
+    12d9:	00 00 00 
+    12dc:	0f 1f 40 00          	nop    DWORD PTR [rax+0x0]
+    12e0:	0f b6 10             	movzx  edx,BYTE PTR [rax]
+    12e3:	8d 7a c6             	lea    edi,[rdx-0x3a]
+    12e6:	48 83 c0 01          	add    rax,0x1
+    12ea:	40 80 ff f5          	cmp    dil,0xf5
+    12ee:	77 f0                	ja     12e0 <main+0x50>
+    12f0:	84 d2                	test   dl,dl
+    12f2:	0f 84 98 00 00 00    	je     1390 <main+0x100>
+    12f8:	b8 ef be ad de       	mov    eax,0xdeadbeef
+    12fd:	80 39 00             	cmp    BYTE PTR [rcx],0x0
+    1300:	0f 84 28 01 00 00    	je     142e <main+0x19e>
+    1306:	ba 01 00 00 00       	mov    edx,0x1
+    130b:	0f 1f 44 00 00       	nop    DWORD PTR [rax+rax*1+0x0]
+    1310:	80 3c 11 00          	cmp    BYTE PTR [rcx+rdx*1],0x0
+    1314:	48 8d 52 01          	lea    rdx,[rdx+0x1]
+    1318:	75 f6                	jne    1310 <main+0x80>
+    131a:	48 83 fa 02          	cmp    rdx,0x2
+    131e:	0f 85 0a 01 00 00    	jne    142e <main+0x19e>
+    1324:	48 63 15 0d 11 00 00 	movsxd rdx,DWORD PTR [rip+0x110d]        # 2438 <stk_ptr>
+    132b:	48 83 fa ff          	cmp    rdx,0xffffffffffffffff
+    132f:	0f 84 f9 00 00 00    	je     142e <main+0x19e>
+    1335:	89 d7                	mov    edi,edx
+    1337:	83 ef 01             	sub    edi,0x1
+    133a:	89 3d f8 10 00 00    	mov    DWORD PTR [rip+0x10f8],edi        # 2438 <stk_ptr>
+    1340:	0f 82 e8 00 00 00    	jb     142e <main+0x19e>
+    1346:	4c 8b 1c d5 40 24 00 	mov    r11,QWORD PTR [rdx*8+0x2440]
+    134d:	00 
+    134e:	83 c2 fe             	add    edx,0xfffffffe
+    1351:	89 15 e1 10 00 00    	mov    DWORD PTR [rip+0x10e1],edx        # 2438 <stk_ptr>
+    1357:	0f be 11             	movsx  edx,BYTE PTR [rcx]
+    135a:	83 c2 d6             	add    edx,0xffffffd6
+    135d:	83 fa 05             	cmp    edx,0x5
+    1360:	0f 87 c8 00 00 00    	ja     142e <main+0x19e>
+    1366:	4c 63 d7             	movsxd r10,edi
+    1369:	4a 8b 0c d5 40 24 00 	mov    rcx,QWORD PTR [r10*8+0x2440]
+    1370:	00 
+    1371:	ff 24 d5 58 01 00 00 	jmp    QWORD PTR [rdx*8+0x158]
+    1378:	44 0f af d9          	imul   r11d,ecx
+    137c:	49 63 c3             	movsxd rax,r11d
+    137f:	e9 2c ff ff ff       	jmp    12b0 <main+0x20>
+    1384:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
+    138b:	00 00 00 
+    138e:	66 90                	xchg   ax,ax
+    1390:	48 8d 79 ff          	lea    rdi,[rcx-0x1]
+    1394:	48 83 c1 01          	add    rcx,0x1
+    1398:	0f 1f 84 00 00 00 00 	nop    DWORD PTR [rax+rax*1+0x0]
+    139f:	00 
+    13a0:	48 89 c8             	mov    rax,rcx
+    13a3:	0f b6 57 01          	movzx  edx,BYTE PTR [rdi+0x1]
+    13a7:	48 83 c7 01          	add    rdi,0x1
+    13ab:	48 83 c1 01          	add    rcx,0x1
+    13af:	80 fa 20             	cmp    dl,0x20
+    13b2:	74 ec                	je     13a0 <main+0x110>
+    13b4:	31 c9                	xor    ecx,ecx
+    13b6:	f6 c2 df             	test   dl,0xdf
+    13b9:	74 21                	je     13dc <main+0x14c>
+    13bb:	0f 1f 44 00 00       	nop    DWORD PTR [rax+rax*1+0x0]
+    13c0:	48 0f be d2          	movsx  rdx,dl
+    13c4:	48 8d 0c 89          	lea    rcx,[rcx+rcx*4]
+    13c8:	48 8d 0c 4a          	lea    rcx,[rdx+rcx*2]
+    13cc:	48 83 c1 d0          	add    rcx,0xffffffffffffffd0
+    13d0:	0f b6 10             	movzx  edx,BYTE PTR [rax]
+    13d3:	48 83 c0 01          	add    rax,0x1
+    13d7:	f6 c2 df             	test   dl,0xdf
+    13da:	75 e4                	jne    13c0 <main+0x130>
+    13dc:	48 63 05 55 10 00 00 	movsxd rax,DWORD PTR [rip+0x1055]        # 2438 <stk_ptr>
+    13e3:	48 8d 78 01          	lea    rdi,[rax+0x1]
+    13e7:	89 3d 4b 10 00 00    	mov    DWORD PTR [rip+0x104b],edi        # 2438 <stk_ptr>
+    13ed:	48 89 0c c5 48 24 00 	mov    QWORD PTR [rax*8+0x2448],rcx
+    13f4:	00 
+    13f5:	e9 c4 fe ff ff       	jmp    12be <main+0x2e>
+    13fa:	44 01 d9             	add    ecx,r11d
+    13fd:	48 63 c1             	movsxd rax,ecx
+    1400:	e9 ab fe ff ff       	jmp    12b0 <main+0x20>
+    1405:	44 29 d9             	sub    ecx,r11d
+    1408:	48 63 c1             	movsxd rax,ecx
+    140b:	e9 a0 fe ff ff       	jmp    12b0 <main+0x20>
+    1410:	8b 3d 22 10 00 00    	mov    edi,DWORD PTR [rip+0x1022]        # 2438 <stk_ptr>
+    1416:	83 ff ff             	cmp    edi,0xffffffff
+    1419:	74 15                	je     1430 <main+0x1a0>
+    141b:	8d 47 ff             	lea    eax,[rdi-0x1]
+    141e:	89 05 14 10 00 00    	mov    DWORD PTR [rip+0x1014],eax        # 2438 <stk_ptr>
+    1424:	48 63 c7             	movsxd rax,edi
+    1427:	8b 04 c5 40 24 00 00 	mov    eax,DWORD PTR [rax*8+0x2440]
+    142e:	5d                   	pop    rbp
+    142f:	c3                   	ret    
+    1430:	b8 ef be ad de       	mov    eax,0xdeadbeef
+    1435:	5d                   	pop    rbp
+    1436:	c3                   	ret    
