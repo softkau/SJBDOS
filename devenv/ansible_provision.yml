@@ -105,7 +105,7 @@
     - name: download standard libraries
       unarchive:
         src: "https://github.com/uchan-nos/mikanos-build/releases/download/v2.0/x86_64-elf.tar.gz"
-        dest: "{{ ansible_env.HOME }}/osbook/devenv"
+        dest: "{{ ansible_env.HOME }}/SJBDOS/devenv"
         remote_src: yes
 
     - name: configure display variable if WSL1
