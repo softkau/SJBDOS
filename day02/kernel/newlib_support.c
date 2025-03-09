@@ -5,9 +5,11 @@ void _exit(void) {
 	while (1) __asm__("hlt");
 }
 
+int printk(const char* format, ...);
 void* prog_brk, *prog_brk_end;
 
 void* sbrk(int incr) {
+  printk("sbrk(%d)\n", incr);
 	if (prog_brk == 0 || prog_brk + incr >= prog_brk_end) {
 		errno = ENOMEM;
 		return (void*)-1;

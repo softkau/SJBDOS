@@ -356,7 +356,7 @@ void Terminal::PrintFormat(const char* format, ...) {
 	Print(s);
 }
 
-void Terminal::BlinkCursor() {
+  void Terminal::BlinkCursor() {
 	cursor_visible = !cursor_visible;
 	DrawCursor(cursor_visible);
 }
@@ -896,8 +896,8 @@ void TaskTerminal(TaskID_t taskID, int64_t data) {
 						terminal->ExecuteFile(file, cmd, args);
 					} break;
 					default: {
-						add_blink_timer(msg.arg.timer.timeout);
 						if (show_window && window_isactive) {
+						  add_blink_timer(msg.arg.timer.timeout);
 							terminal->BlinkCursor();
 							auto area = terminal->GetCursorArea();
 							msg = MakeLayerMessage(taskID, terminal->LayerID(), LayerOperation::DrawPartial, area);
@@ -911,6 +911,16 @@ void TaskTerminal(TaskID_t taskID, int64_t data) {
 			} break;
 			case Message::WindowActive:
 				window_isactive = msg.arg.window_active.activate;
+        if (window_isactive)
+				  add_blink_timer(timer_manager->CurrentTick());
+        else {
+          terminal->DrawCursor(false);
+          auto area = terminal->GetCursorArea();
+          msg = MakeLayerMessage(taskID, terminal->LayerID(), LayerOperation::DrawPartial, area);
+          DISABLE_INTERRUPT;
+          task_manager->SendMsg(MainTaskID, msg);
+          ENABLE_INTERRUPT;
+        }
 				break;
 			case Message::KeyPush: {
 				auto& arg = msg.arg.keyboard;

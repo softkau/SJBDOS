@@ -18,7 +18,7 @@ then
 	$SJBDOS_DIR="$HOME/osbook/$1"
 fi
 
-LOADER_EFI="$SJBDOS_DIR/X64/Loader.efi"
+LOADER_EFI="$SJBDOS_DIR/SJBDLoaderPkg/build/Loader.efi"
 KERNEL_ELF="$SJBDOS_DIR/kernel/build/kernel.elf"
 
 $DEVENV_DIR/make_image.sh $DISK_IMG $MOUNT_POINT $LOADER_EFI $KERNEL_ELF

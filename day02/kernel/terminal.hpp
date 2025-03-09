@@ -30,6 +30,7 @@ public:
 	void Print(char32_t c);
 	void Print(const char* s, std::optional<size_t> len = std::nullopt); // linebuf와 linebuf_index가 변경되지 않음
 	void PrintFormat(const char* format, ...);
+	void DrawCursor(bool visible);
 	void BlinkCursor();
 	Vector2D<int> GetCursorPos() const;
 	Rect<int> GetCursorArea() const;
@@ -42,7 +43,6 @@ private:
 
 	Vector2D<int> cursor{0,0};
 	bool cursor_visible {false};
-	void DrawCursor(bool visible);
 
 	int linebuf_index{0};
 	std::array<char, LineMax> linebuf{};

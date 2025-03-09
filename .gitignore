@@ -4,6 +4,7 @@ day02/resource/*.jpg
 day02/resource/*.ttf
 day02/test/
 day02/X64
+day02/SJBDLoaderPkg/build/
 day02/kernel_bp
 *.img
 devenv/x86_64-elf/

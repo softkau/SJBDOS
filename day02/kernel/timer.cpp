@@ -94,11 +94,11 @@ TimerManager::TimerManager() {
 	timers.push(Timer{std::numeric_limits<unsigned long>::max(), -1, MainTaskID}); // 파수꾼(sentinel) 테크닉
 }
 
+#include "logger.hpp"
+
 void TimerManager::AddTimer(const Timer &timer) {
 	timers.push(timer);
 }
-
-#include "logger.hpp"
 
 bool TimerManager::Tick() {
 	++tick;

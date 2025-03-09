@@ -640,3 +640,37 @@
 
 		일단 원본이랑 구동 비교해서 성능이 구려지는 이유라든지
 		아무튼 그런 걸 좀 찾아야겠다
+*** 찍턴 시작 *** (2024-03-10)
+2024-03-13
+	로컬로 파일 옮기는 중...
+	개발 환경 다시 셋팅 중...
+	https://wikidocs.net/164069
+	^ 위 사이트에 절차가 나와있다.
+	1. 빌드 repo clone
+	2. ansible로 컴파일러, nasm 등의 개발툴들을 세팅한다.
+		* llvm, lld clang 등 버전 최신화
+		* qemu gui 세팅
+		* llvm 14를 디폴트로 설정
+		* EDK2 repo clone
+		* EDK2 base tools
+		* newlib C 표준라이브러리
+		* DISPLAY VARIABLE 설정 (WSL1/WSL2)
+	3. 근데 이거 정리 좀 할 필요가 있어보인다... 엄...
+	지금 QEMU가 안 열린다...???
+	DISPLAY 변수뿐만 아니라
+	export LIBGL_ALWAYS_INDIRECT=1
+	도 해줘야 QEMU가 열린다...
+
+2025-03-09
+  run 할 때 해줘야 하는 것:
+    source ./devenv/buildenv.sh (빌드 환경변수 셋팅)
+    APP_DIR=apps RESOURCE_DIR=resource (앱 로딩 및 폰트 로딩) ./build.sh run
+  메모리 누수 현상 해결:
+    text 창에서 sbrk를 미친 듯이 호출하는 현상이 발생했었음
+    그 결과 text 창을 켜놓은 상태로 os를 방치하면 성능저하 및 뻗는 이슈가 발생함
+    특이한 점은 physical memory는 전혀 늘지 않고 계속 out of memory가 먼저 터짐
+    이 이유는 아직도 잘 모르겠음...
+
+    일단 Draw Message를 switch 문 안쪽으로 넣었더니 해결됨.
+    아마도 switch 문 바깥에 있게 되면 계속 draw를 호출하는 악순환이 발생하는 것으로 보임.
+    이로 인해 task queue가 무한정 늘어나 메모리가 떨어진 것으로 추정됨.
