@@ -41,7 +41,7 @@
 void operator delete(void* obj) noexcept {}
 const int kTextboxCursorTimer = 1;
 
-int printk(const char* format, ...) {
+extern "C" int printk(const char* format, ...) {
 	va_list ap;
 	int result;
 	char s[1024];
@@ -133,21 +133,54 @@ void TaskTextWindow(TaskID_t taskID, int64_t data) {
 	auto& task = task_manager->CurrentTask();
 	layer_task_map->insert(std::make_pair(layerID_text_window, taskID));
 	ENABLE_INTERRUPT;
-
+  printk("wtf?");
 	bool cursor_visible = 1;
+  bool is_active = true;
+  auto add_blink_timer = [taskID](unsigned long t) {
+    timer_manager->AddTimer(Timer{ t + static_cast<int>(kTimerFreq * 0.5), 1, taskID });
+  };
+  add_blink_timer(timer_manager->CurrentTick());
 
 	while (true) {
-		const auto& msg = task.Wait();
+    DISABLE_INTERRUPT;
+    auto msg_opt = task.ReceiveMsg();
+    if (!msg_opt) {
+      task.Sleep();
+      ENABLE_INTERRUPT;
+      continue;
+    }
+    ENABLE_INTERRUPT;
+    Message msg = *msg_opt;
 		
 		switch (msg.type) {
 			case Message::TimerTimeout:
-				cursor_visible = !cursor_visible;
-				DrawTextCursor(cursor_visible);
+        if (is_active) {
+          add_blink_timer(msg.arg.timer.timeout);
+          cursor_visible = !cursor_visible;
+          DrawTextCursor(cursor_visible);
+          DISABLE_INTERRUPT;
+		      task_manager->SendMsg(MainTaskID, MakeLayerMessage(taskID, layerID_text_window, LayerOperation::Draw, {}));
+          ENABLE_INTERRUPT;
+        }
 				break;
 			case Message::KeyPush:
 				if (msg.arg.keyboard.press)
 					InputTextWindow(msg.arg.keyboard.ascii);
+          DISABLE_INTERRUPT;
+		      task_manager->SendMsg(MainTaskID, MakeLayerMessage(taskID, layerID_text_window, LayerOperation::Draw, {}));
+          ENABLE_INTERRUPT;
 				break;
+      case Message::WindowActive:
+        is_active = msg.arg.window_active.activate;
+        if (is_active)
+          add_blink_timer(timer_manager->CurrentTick());
+        else {
+          DrawTextCursor(false);
+          DISABLE_INTERRUPT;
+		      task_manager->SendMsg(MainTaskID, MakeLayerMessage(taskID, layerID_text_window, LayerOperation::Draw, {}));
+          ENABLE_INTERRUPT;
+        }
+        break;
 			case Message::WindowClose:
 				CloseLayer(msg.arg.window_close.layer_id);
 				DISABLE_INTERRUPT;
@@ -155,9 +188,6 @@ void TaskTextWindow(TaskID_t taskID, int64_t data) {
 				break;
 			default: break;
 		}
-		DISABLE_INTERRUPT;
-		task_manager->SendMsg(MainTaskID, MakeLayerMessage(taskID, layerID_text_window, LayerOperation::Draw, {}));
-		ENABLE_INTERRUPT;
 	}
 }
 
@@ -200,7 +230,7 @@ extern "C" void KernelMain(const FrameBufferConfig* frame_buffer_config_ptr, con
 
 	const int kTimerHalfSec = kTimerFreq * 0.5;
 	DISABLE_INTERRUPT;
-	timer_manager->AddTimer(Timer(kTimerHalfSec, kTextboxCursorTimer, MainTaskID));
+	// timer_manager->AddTimer(Timer(kTimerHalfSec * 2, kTextboxCursorTimer, MainTaskID));
 	//timer_manager->AddTimer(Timer(kTimerFreq * 1, 24));
 	ENABLE_INTERRUPT;
 
@@ -251,7 +281,7 @@ extern "C" void KernelMain(const FrameBufferConfig* frame_buffer_config_ptr, con
 			case Message::TimerTimeout:
 				switch (msg->arg.timer.value) {
 					case kTextboxCursorTimer:
-						InterruptGuard([](){ timer_manager->AddTimer(Timer(kTimerHalfSec, kTextboxCursorTimer, MainTaskID)); });
+						InterruptGuard([](){ timer_manager->AddTimer(Timer(timer_manager->CurrentTick() + kTimerHalfSec * 2, kTextboxCursorTimer, MainTaskID)); });
 						DISABLE_INTERRUPT;
 						task_manager->SendMsg(task_textwindow_id, *msg);
 						ENABLE_INTERRUPT;

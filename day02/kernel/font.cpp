@@ -3,6 +3,7 @@
 #include "fat.hpp"
 #include <cstdint>
 #include <vector>
+#include "logger.hpp"
 
 extern const uint8_t _binary_build_hankaku_bin_start;
 extern const uint8_t _binary_build_hankaku_bin_end;
@@ -21,12 +22,16 @@ void InitFont() {
 	}
 
 	auto [ entry, pos_slash ] = fat::FindFile("/nihongo.ttf");
-	if (entry == nullptr || pos_slash) exit(1);
+	if (entry == nullptr || pos_slash) {
+    Log(kError, "NO /nihongo.ttf IN DISK.");
+    exit(1);
+  }
 
 	const size_t size = entry->dir_FileSize;
 	nihongo_buf = new std::vector<uint8_t>(size);
 	if (fat::LoadFile(nihongo_buf->data(), size, entry) != size) {
 		delete nihongo_buf;
+    Log(kError, "Error while loading nihongo.ttf");
 		exit(1);
 	}
 }

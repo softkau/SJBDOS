@@ -1,1 +1,1 @@
-/home/sjbd/osbook/day02/kernel/elf.h
+../kernel/elf.h
