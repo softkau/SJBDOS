@@ -3,6 +3,11 @@
 
 ## Video Demo
 [![demo](http://img.youtube.com/vi/eUbBKmzVzIs/0.jpg)](http://www.youtube.com/watch?v=eUbBKmzVzIs "자작 os")
+
+## WIP
+* support for GRUB
+* kernel-free terminal
+* other cool features
 ---
 # mikanos-build
 
