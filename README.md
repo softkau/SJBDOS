@@ -1,3 +1,9 @@
+# SJBDOS
+(re-coded [MikanOS](https://github.com/uchan-nos/mikanos) for learning purposes)
+
+## Video Demo
+[![demo](http://img.youtube.com/vi/eUbBKmzVzIs/0.jpg)](http://www.youtube.com/watch?v=eUbBKmzVzIs "자작 os")
+---
 # mikanos-build
 
 このリポジトリは uchan が開発している教育用 OS [MikanOS](https://github.com/uchan-nos/mikanos) をビルドする手順およびツールを収録しています。
