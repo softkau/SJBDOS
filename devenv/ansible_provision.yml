@@ -95,17 +95,17 @@
     - name: clone EDK II repository
       git:
         repo: "https://github.com/tianocore/edk2.git"
-        dest: "{{ ansible_env.HOME }}/edk2"
+        dest: "{{ inventory_dir }}/edk2"
         version: "edk2-stable202208"
 
     - name: build EDK II base tools
       make:
-        chdir: "{{ ansible_env.HOME }}/edk2/BaseTools/Source/C"
+        chdir: "{{ inventory_dir }}/edk2/BaseTools/Source/C"
 
     - name: download standard libraries
       unarchive:
         src: "https://github.com/uchan-nos/mikanos-build/releases/download/v2.0/x86_64-elf.tar.gz"
-        dest: "{{ ansible_env.HOME }}/osbook/devenv"
+        dest: "{{ inventory_dir }}"
         remote_src: yes
 
     - name: configure display variable if WSL1

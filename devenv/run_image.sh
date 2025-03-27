@@ -33,5 +33,4 @@ qemu-system-x86_64 $DBG_OPTS \
     -device nec-usb-xhci,id=xhci \
     -device usb-mouse -device usb-kbd \
     $OPT \
-    -vnc :1 \
     $QEMU_OPTS

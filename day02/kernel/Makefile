@@ -33,7 +33,7 @@ CXXFLAGS += -O3 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
 LDFLAGS  += --entry $(ENTRY_POINT) -z norelro --image-base 0x100000 --static
 
 .PHONY: all
-all: build_directory $(TARGET)
+all: $(TARGET)
 
 build_directory:
 	@mkdir -p $(BUILD_DIRECTORIES)
@@ -49,7 +49,7 @@ clean:
 	find ./build -type f -name '*.o' -delete
 
 # link
-$(TARGET): $(CXXOBJS) $(COBJS) $(ASMOBJS) $(FNTOBJ) Makefile
+$(TARGET): build_directory $(CXXOBJS) $(COBJS) $(ASMOBJS) $(FNTOBJ) Makefile
 	$(LINKER) $(LDFLAGS) -o $@ $(CXXOBJS) $(COBJS) $(ASMOBJS) $(FNTOBJ) -lc -lc++ -lc++abi -lm -lfreetype
 
 

@@ -1,3 +1,10 @@
+day02/apps/*/*
+day02/apps/*/Makefile
+!day02/apps/*/*.cpp
+!day02/apps/*/*.hpp
+!day02/apps/*/*.c
+!day02/apps/*/*.h
+!day02/apps/*/*.asm
 day02/kernel/build/
 day02/resource/*.bmp
 day02/resource/*.jpg
@@ -7,4 +14,8 @@ day02/X64
 day02/kernel_bp
 *.img
 devenv/x86_64-elf/
+devenv/edk2/
+day02/SJBDLoaderPkg/elf.h
+day02/SJBDLoaderPkg/frame_buffer_config.h
+day02/SJBDLoaderPkg/memmap.h
 ref/

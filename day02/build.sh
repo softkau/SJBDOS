@@ -14,10 +14,10 @@ done
 
 if [ "${1:-}" = "run" ]
 then
-	SJBDOS_DIR=$PWD $HOME/osbook/devenv/run_sjbdos.sh
+	SJBDOS_DIR=$PWD "./../devenv/run_sjbdos.sh"
 elif [ "${1:-}" = "debug" ]
 then
 	#DBG_OPTS="-s -S -d int -no-reboot -no-shutdown"
 	DBG_OPTS="-s -S"
-	DBG_OPTS=$DBG_OPTS SJBDOS_DIR=$PWD $HOME/osbook/devenv/run_sjbdos.sh
+	DBG_OPTS=$DBG_OPTS SJBDOS_DIR=$PWD "./../devenv/run_sjbdos.sh"
 fi

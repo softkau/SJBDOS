@@ -3,6 +3,7 @@
 #include "fat.hpp"
 #include <cstdint>
 #include <vector>
+#include "logger.hpp"
 
 extern const uint8_t _binary_build_hankaku_bin_start;
 extern const uint8_t _binary_build_hankaku_bin_end;
@@ -20,19 +21,28 @@ void InitFont() {
 		exit(1);
 	}
 
+  nihongo_buf = nullptr;
 	auto [ entry, pos_slash ] = fat::FindFile("/nihongo.ttf");
-	if (entry == nullptr || pos_slash) exit(1);
+	if (entry == nullptr || pos_slash) {
+    Log(kError, "Failed to find nihongo_buf.\nJapanese characters may not be rendered correctly.\n");
+    return;
+  }
 
 	const size_t size = entry->dir_FileSize;
 	nihongo_buf = new std::vector<uint8_t>(size);
 	if (fat::LoadFile(nihongo_buf->data(), size, entry) != size) {
 		delete nihongo_buf;
-		exit(1);
+    nihongo_buf = nullptr;
+    Log(kError, "Failed to load nihongo_buf.\nJapanese characters may not be rendered correctly.\n");
+    return;
 	}
 }
 
 WithError<FT_Face> NewFTFace() {
 	FT_Face face;
+  if (!nihongo_buf) {
+    return { face, MakeError(Error::kFreeTypeError) };
+  }
 	if (int err = FT_New_Memory_Face(ft_library, nihongo_buf->data(), nihongo_buf->size(), 0, &face)) {
 		return { face, MakeError(Error::kFreeTypeError) };
 	}
