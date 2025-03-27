@@ -15,6 +15,9 @@
  */
 
 EXTERN_C_BEG
+void AtaSoftReset(uint16_t control_base);
+void IoOut8(uint16_t addr, uint8_t data);
+uint8_t IoIn8(uint16_t addr);
 void IoOut32(uint16_t addr, uint32_t data); // writes data at addr
 uint32_t IoIn32(uint16_t addr); // reads 32bit integer value from addr
 uint16_t GetCS(void); // reads code segment register value

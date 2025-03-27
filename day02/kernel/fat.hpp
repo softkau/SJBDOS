@@ -145,6 +145,5 @@ namespace fat {
 	size_t LoadFile(void* buf, size_t len, const DirectoryEntry* entry);
 	WithError<DirectoryEntry*> CreateFile(const char* path);
 
-	extern BPB* boot_volume_image;
 	extern unsigned long bytes_per_cluster;
 }

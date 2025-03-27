@@ -51,8 +51,8 @@ private:
 };
 
 extern TimerManager* timer_manager;
-extern unsigned long lapic_timer_freq;
-constexpr int kDefaultLAPICTimerFreq = 100;
+extern unsigned long lapic_timer_freq; // LAPIC timer frequency, measured in Hz.
+constexpr int kDefaultLAPICTimerFreq = 100; // assumed LAPIC timer frequency, if initialization failes. (in Hz.)
 constexpr int kTimerFreq = 100;
 
 constexpr int kTaskTimerPeriod = static_cast<int>(kTimerFreq * 0.02);

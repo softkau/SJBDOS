@@ -1,34 +1,47 @@
 #include "fat.hpp"
+#include "ide.hpp"
 
 #include <cctype>
+#include <cstdint>
 #include <cstring>
 #include <memory>
 #include <algorithm>
 
 namespace fat {
-	BPB* boot_volume_image;
+  BPB bpb;
+	// BPB* boot_volume_image;
+  std::vector<uint32_t> FAT_TABLE;
 	unsigned long bytes_per_cluster;
 	unsigned long DirectoryEntry::per_cluster;
 
 	namespace {
-		unsigned long clus2_begin_sector;
+		uint64_t clus2_begin_sector;
 	}
 
 	void Initialize(void* volume_image) {
-		boot_volume_image = reinterpret_cast<fat::BPB*>(volume_image);
-		bytes_per_cluster = static_cast<unsigned long>(boot_volume_image->bpb_BytesPerSec) * boot_volume_image->bpb_SecPerClus;
+    uint8_t buf[512];
+    ide::readSectors(0, 1, 0x0, buf);
+    std::memcpy(&bpb, buf, sizeof(bpb));
+    bytes_per_cluster = static_cast<uint64_t>(bpb.bpb_BytesPerSec) * bpb.bpb_SecPerClus;
+
+		// boot_volume_image = reinterpret_cast<fat::BPB*>(volume_image);
 		DirectoryEntry::per_cluster = bytes_per_cluster / sizeof(DirectoryEntry);
 
+    uint64_t FAT_TABLE_SECTORS = static_cast<uint64_t>(bpb.bpb_NumFATs) * bpb.bpb_FATSz32;
+    uint64_t FAT_TABLE_BYTES = FAT_TABLE_SECTORS * bpb.bpb_BytesPerSec;
+    FAT_TABLE.resize(FAT_TABLE_BYTES / sizeof(uint32_t));
+    uint64_t lba_of_fat = bpb.bpb_RsvdSecCnt * bpb.bpb_BytesPerSec / 512;
+    ide::readSectors(0, FAT_TABLE_BYTES / 512, lba_of_fat, FAT_TABLE.data());
+
 		clus2_begin_sector
-			= static_cast<unsigned long>(boot_volume_image->bpb_RsvdSecCnt)
-			+ static_cast<unsigned long>(boot_volume_image->bpb_NumFATs) * boot_volume_image->bpb_FATSz32;	
+			= static_cast<uint64_t>(bpb.bpb_RsvdSecCnt)
+			+ static_cast<uint64_t>(bpb.bpb_NumFATs) * bpb.bpb_FATSz32;	
 	}
 
 	uintptr_t GetClusterAddr(unsigned long cluster_num) {
-		auto sector_num = clus2_begin_sector + (cluster_num - 2) * boot_volume_image->bpb_SecPerClus;
+		auto sector_num = clus2_begin_sector + (cluster_num - 2) * bpb.bpb_SecPerClus;
 		
-		uintptr_t offset = sector_num * boot_volume_image->bpb_BytesPerSec;
-		return reinterpret_cast<uintptr_t>(boot_volume_image) + offset;
+		return sector_num * bpb.bpb_BytesPerSec;
 	}
 
 	void ReadName(const DirectoryEntry* entry, char* basename9, char* ext3) {
@@ -77,9 +90,10 @@ namespace fat {
 	}
 
 	uint32_t* GetFAT() {
-		uintptr_t fat_offset = static_cast<unsigned long>(boot_volume_image->bpb_RsvdSecCnt) * boot_volume_image->bpb_BytesPerSec;
-		uintptr_t fat = reinterpret_cast<uintptr_t>(boot_volume_image) + fat_offset;
-		return reinterpret_cast<uint32_t*>(fat);
+    return FAT_TABLE.data();
+		// uintptr_t fat_offset = static_cast<unsigned long>(boot_volume_image->bpb_RsvdSecCnt) * boot_volume_image->bpb_BytesPerSec;
+		// uintptr_t fat = reinterpret_cast<uintptr_t>(boot_volume_image) + fat_offset;
+		// return reinterpret_cast<uint32_t*>(fat);
 	}
 
 	unsigned long NextCluster(unsigned long cluster) {
@@ -176,10 +190,10 @@ namespace fat {
 
 	std::pair<DirectoryEntry*, bool> FindFile(const char* path, unsigned long directory_cluster) {
 		if (path[0] == '/') { // absolute path
-			directory_cluster = boot_volume_image->bpb_RootClus;
+			directory_cluster = bpb.bpb_RootClus;
 			++path;
 		} else if (directory_cluster == 0) { // root
-			directory_cluster = boot_volume_image->bpb_RootClus;
+			directory_cluster = bpb.bpb_RootClus;
 		}
 
 		auto name_buf = std::make_unique<char>(256);
@@ -391,7 +405,7 @@ namespace fat {
 	}
 
 	WithError<DirectoryEntry*> CreateFile(const char* path) {
-		auto parent_dir_cluster = fat::boot_volume_image->bpb_RootClus;
+		auto parent_dir_cluster = fat::bpb.bpb_RootClus;
 		const char* filename = path;
 
 		// separate file name and parent directory path

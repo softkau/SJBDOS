@@ -270,10 +270,25 @@ Error ConfigureMSIFixedDestination(
 } // namespace pci
 
 #include <cstdlib>
+#include "ata_pio.hpp"
+#include "ide.hpp"
 
 void InitializePCI() {
 	if (auto err = pci::ScanAllBus()) {
 		Log(kError, "ScanAllBus: %s\n", err.Name());
 		exit(1);
 	}
+  for (int i = 0; i < pci::g::num_devices; i++) {
+    auto& dev = pci::g::devices[i];
+    if (dev.class_code.base == 0x01) {
+      auto dev_type = ata::DetectDevType(0, dev);
+      switch (dev_type) {
+        case ata::ATADEV_T::PATA: Log(kWarn, "PATA device\n"); break;
+        case ata::ATADEV_T::PATAPI: Log(kWarn, "PATAPI device\n"); break;
+        case ata::ATADEV_T::SATA: Log(kWarn, "SATA device\n"); break;
+        case ata::ATADEV_T::SATAPI: Log(kWarn, "SATAPI device\n"); break;
+        case ata::ATADEV_T::UNKNOWN: Log(kWarn, "??? device\n"); break;
+      }
+    }
+  }
 }

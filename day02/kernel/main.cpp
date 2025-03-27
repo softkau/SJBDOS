@@ -31,6 +31,7 @@
 #include "timer.hpp"
 #include "terminal.hpp"
 #include "fat.hpp"
+#include "ide.hpp"
 
 #include "task.hpp"
 
@@ -191,6 +192,8 @@ void TaskTextWindow(TaskID_t taskID, int64_t data) {
 	}
 }
 
+uint8_t buf[512];
+
 extern "C" void KernelMain(const FrameBufferConfig* frame_buffer_config_ptr, const MemoryMap* memory_map_ptr, const acpi::RSDP* acpi_table, void* volume_image) {
 	FrameBufferConfig frame_buffer_config{*frame_buffer_config_ptr};
 	MemoryMap memory_map{*memory_map_ptr};
@@ -214,6 +217,12 @@ extern "C" void KernelMain(const FrameBufferConfig* frame_buffer_config_ptr, con
 	/* Initialize Interrupt Handler */
 	InitializeInterrupt();
 	
+	/* Initialize Timer */
+	acpi::Initialize(*acpi_table);
+	InitLAPICTimer(acpi::fadt);
+  ide::initIDE(0x1f0, 0x3f4, 0x170, 0x374, 0x000);
+  printk("IDE: init finished!");
+
 	fat::Initialize(volume_image);
 	font::InitFont();
 	InitializePCI();
@@ -224,10 +233,6 @@ extern "C" void KernelMain(const FrameBufferConfig* frame_buffer_config_ptr, con
 	//InitializeTextWindow();
 	kLayerManager->Draw({{0,0}, ScreenSize() });
 
-	/* Initialize Timer */
-	acpi::Initialize(*acpi_table);
-	InitLAPICTimer(acpi::fadt);
-
 	const int kTimerHalfSec = kTimerFreq * 0.5;
 	DISABLE_INTERRUPT;
 	// timer_manager->AddTimer(Timer(kTimerHalfSec * 2, kTextboxCursorTimer, MainTaskID));
@@ -236,6 +241,7 @@ extern "C" void KernelMain(const FrameBufferConfig* frame_buffer_config_ptr, con
 
 	InitTask();
 	Task& main_task = task_manager->CurrentTask();
+  
 	const uint64_t task_textwindow_id = task_manager->NewTask()
 		.InitContext(TaskTextWindow, 0)
 		.Wakeup()
@@ -293,7 +299,7 @@ extern "C" void KernelMain(const FrameBufferConfig* frame_buffer_config_ptr, con
 			case Message::KeyPush: {
 				if (msg->arg.keyboard.press && msg->arg.keyboard.keycode == 59 /* F2 */) {
 					task_manager->NewTask().InitContext(TaskTerminal, 0).Wakeup();
-				}
+				} 
 
 				DISABLE_INTERRUPT;
 				auto task_it = layer_task_map->find(active_layer->GetActiveLayer());

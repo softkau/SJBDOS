@@ -16,6 +16,37 @@ KernelEntryPoint:
 	hlt
 	jmp .fin
 ; ---------------------------------------------------------------
+global AtaSoftReset   ; AtaSoftReset(uint16_t control_base);
+AtaSoftReset:
+  push rax
+  mov al, 4       ; SRST bit
+  out dx, al      ; trigger reset
+  xor eax, eax
+  out dx, al      ; clear SRST bit
+  in al, dx       ; do 400ns delay
+  in al, dx
+  in al, dx
+  in al, dx
+.rdylp:
+  in al, dx
+  and al, 0xc0
+  cmp al, 0x40
+  jne short .rdylp
+  pop rax
+  ret
+; ---------------------------------------------------------------
+global IoOut8
+IoOut8:
+  mov dx, di
+  mov eax, esi
+  out dx, al
+; ---------------------------------------------------------------
+global IoIn8
+IoIn8:
+  mov dx, di
+  in al, dx
+  ret
+; ---------------------------------------------------------------
 global IoOut32			; void IoOut32(uint16_t addr, uint32_t data);
 IoOut32:
 	mov dx, di			; dx = addr
