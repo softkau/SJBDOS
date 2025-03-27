@@ -15,7 +15,7 @@ A random OS for hobby project.
 * other cool features
 ## ⚙How to Build(important)
 ### ⛔Disclaimer
-Compilation has only been tested on Ubuntu 22.04 LTS.  
+Compilation has only been tested on Ubuntu 22.04, and 24.04.
 It may or maynot fail to compile/link in other versions of
 Ubuntu.  
 
@@ -41,6 +41,10 @@ It'll install bunch of stuff:
 * x86 libc++
 * iasl (check if the command is installed correctly by `iasl -v`)
 * some other random stuff i don't know lol
+
+If there's an error regarding `python3-distutils not found`, you can `apt install` it manually,  
+or if you're using Ubuntu 24.04 or higher, remove the line containing `distutils` in `ansible_provision.yml`.  
+The package is deprecated as far as I know, and you can probably ignore it.  
 
 You'll notice that `edk2` and `x86_64-elf` folder now appear in
 your `devenv` directory.  
