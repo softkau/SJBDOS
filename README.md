@@ -42,7 +42,7 @@ It'll install bunch of stuff:
 * iasl (check if the command is installed correctly by `iasl -v`)
 * some other random stuff i don't know lol
 
-You'll notice that `edk2` and `x86_64-elf` folder now appears in
+You'll notice that `edk2` and `x86_64-elf` folder now appear in
 your `devenv` directory.  
 Optionally, you need to run this command if you're using WSL/WSL2.
 This sets up the `DISPLAY` environment variable.
@@ -103,7 +103,7 @@ For kernel, you need to do the following in `day02` folder:
 APPS_DIR=apps RESOURCE_DIR=resource ./build.sh run
 ```
 If something fails, `make clean` inside `day02/kernel` folder
-mostly sloves everything. (Makefile is kinda buggy right now)
+mostly solves everything. (Makefile is kinda buggy right now)
 
 ### 👉How do I debug kernel with GDB?
 You probably want to debug in unoptimized build
@@ -111,6 +111,6 @@ to prevent extra headache:
 ```bash
 APPS_DIR=apps RESOURCE_DIR=resource ./build.sh debug
 ```
-and now open a new terminal, and go to the same directory(`day02`),
-run: `./rungdb`.  
+And now open a new terminal, and go to the same directory(`day02`).  
+Run: `./rungdb.sh`.  
 This will make gdb attach to currently running qemu session.
