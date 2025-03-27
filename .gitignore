@@ -5,6 +5,7 @@ day02/apps/*/Makefile
 !day02/apps/*/*.c
 !day02/apps/*/*.h
 !day02/apps/*/*.asm
+day02/apps/*.o
 day02/kernel/build/
 day02/resource/*.bmp
 day02/resource/*.jpg
