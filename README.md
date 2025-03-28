@@ -83,11 +83,11 @@ build
 ### 👉Building the kernel and run (on QEMU)
 This command will setup libc++ PATH for clang.
 ```bash
-cd ../../ && source devenv/buildenv.sh
+cd ../ && source ./buildenv.sh
 ```
 Change directory to `day02`:
 ```bash
-cd day02
+cd ../day02
 ```
 Finally, build kernel and run!
 ```bash
